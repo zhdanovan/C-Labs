@@ -29,6 +29,17 @@ class Program
                     //Создать и заполнить бинарный файл
                     CreateTheNewFile(@"C:\Users\Lenovo\source\repos\4_9algo\test.bin", 1, 2, 3, 4, 5);
                     break;
+                case "4":
+                    string[] fileNames = { "C:/4_9algo/file1.bin", "C:/4_9algo/file2.bin", "C:/4_9algo/file3.bin", "C:/4_9algo/file4.bin" };
+
+                    // Заполнение файлов случайными числами
+                    foreach (var fileName in fileNames)
+                    {
+                        FillFileWithRandomNumbers(fileName, 100);
+                    }
+
+                    ProcessFiles(fileNames);
+                    break;
                 case "q":
                     // Выход из программы
                     return;
@@ -126,5 +137,88 @@ class Program
         }
     }
 
- 
+
+    // Функция для заполнения файла случайными числами
+    static void FillFileWithRandomNumbers(string fileName, int count)
+    {
+        Random random = new Random();
+        int[] numbers = new int[count];
+
+        for (int i = 0; i < count; i++)
+        {
+            numbers[i] = random.Next(1, 5); // Генерация случайного числа от 1 до 100
+        }
+
+        WriteBinaryFile(fileName, numbers);
+    }
+
+    // Функция для обработки файлов
+    static void ProcessFiles(string[] fileNames)
+    {
+        foreach (var fileName in fileNames)
+        {
+            Console.WriteLine($"Обработка файла {fileName}");
+
+            if (!File.Exists(fileName))
+            {
+                Console.WriteLine("Файл не существует");
+                continue;
+            }
+
+            int[] numbers = ReadBinaryFile(fileName);
+
+            if (numbers.Length == 0)
+            {
+                Console.WriteLine("Файл пуст");
+                continue;
+            }
+
+            Console.WriteLine("Исходное содержимое файла:");
+            PrintNumbers(numbers);
+
+            numbers = NullifyMinMax(numbers);
+
+            WriteBinaryFile(fileName, numbers);
+
+            Console.WriteLine("Содержимое файла после изменения:");
+            PrintNumbers(numbers);
+        }
+    }
+
+    // Функция для чтения чисел из бинарного файла
+    static int[] ReadBinaryFile(string fileName)
+    {
+        using (BinaryReader reader = new BinaryReader(File.Open(fileName, FileMode.Open)))
+        {
+            return reader.ReadBytes((int)reader.BaseStream.Length).Select(b => (int)b).ToArray();
+        }
+    }
+
+    // Функция для обнуления минимальных и максимальных элементов
+    static int[] NullifyMinMax(int[] numbers)
+    {
+        int min = numbers.Min();
+        int max = numbers.Max();
+
+        for (int i = 0; i < numbers.Length; i++)
+        {
+            if (numbers[i] == min || numbers[i] == max)
+            {
+                numbers[i] = 0;
+            }
+        }
+
+        return numbers;
+    }
+
+    // Функция для вывода чисел
+    static void PrintNumbers(int[] numbers)
+    {
+        foreach (var number in numbers)
+        {
+            Console.Write(number + " ");
+        }
+        Console.WriteLine();
+    }
 }
+
