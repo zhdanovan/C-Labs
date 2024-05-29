@@ -1,0 +1,130 @@
+using System;
+using System.IO;
+using System.Linq;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Считывание всего текста из файла
+        string file_name = File.ReadAllText(@"C:\Users\Lenovo\source\repos\4_9algo\input.txt");
+        string file_name1 = File.ReadAllText(@"C:\Users\Lenovo\source\repos\4_9algo\input1.txt");
+
+        while (true)
+        {
+            Console.WriteLine("Введите номер задачи (1-5), или 'q' для выхода:");
+            string input_task = Console.ReadLine();
+
+            switch (input_task)
+            {
+                case "1":
+                    // Задача 1: Поменять местами символы с четными и нечетными номерами в заданной строке
+                    Console.WriteLine(SwapEvenOddChars(file_name1));
+                    break;
+                case "2":
+                    // Задача 2: Вывести слова в порядке возрастания их длины
+                    Console.WriteLine(SortWordsByLength(file_name));
+                    break;
+                case "3":
+                    //Создать и заполнить бинарный файл
+                    CreateTheNewFile(@"C:\Users\Lenovo\source\repos\4_9algo\test.bin", 1, 2, 3, 4, 5);
+                    break;
+                case "q":
+                    // Выход из программы
+                    return;
+                default:
+                    Console.WriteLine("Неверный ввод. Попробуйте еще раз.");
+                    break;
+            }
+        }
+    }
+
+    // Функция для замены символов с четными и нечетными номерами
+    static string SwapEvenOddChars(string s)
+    {
+        char[] arr = s.ToCharArray();
+        for (int i = 0; i < s.Length - 1; i += 2)
+        {
+            char temp = arr[i];
+            arr[i] = arr[i + 1];
+            arr[i + 1] = temp;
+        }
+        return new string(arr);
+    }
+
+    // Функция для сортировки слов по длине
+    static string SortWordsByLength(string s)
+    {
+        var words = s.Split(' ').OrderBy(word => word.Length);
+        return string.Join(" ", words);
+    }
+
+    // Функция для создания и заполнения бинарного файла
+    static void CreateTheNewFile(string path, params int[] values)
+    {
+        try
+        {
+            using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
+            {
+                foreach (int value in values)
+                {
+                    writer.Write(value);
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine("Произошла ошибка при работе с файлом: " + e.Message);
+        }
+    }
+
+    static void ReadFile(string path, uint n = 10, string delimiter = ", ")
+    {
+        try
+        {
+            using (FileStream fileStream = File.OpenRead(path))
+            using (BinaryReader binaryReader = new BinaryReader(fileStream))
+            {
+                if (fileStream.Length == 0)
+                {
+                    Console.WriteLine("< empty file >");
+                    return;
+                }
+                int i = 0;
+                while (binaryReader.PeekChar() != -1)
+                {
+                    int tmp = binaryReader.ReadInt32();
+                    Console.Write(tmp);
+                    //binaryReader.ReadString();
+                    if (binaryReader.PeekChar() != -1)
+                    {
+                        Console.Write(delimiter);
+                        i++;
+                        if (i == n)
+                            Console.WriteLine();
+                    }
+                    else
+                        Console.WriteLine(".");
+
+                }
+            }
+
+        }
+        catch (IOException e)
+        {
+            Console.WriteLine($"Ошибка обработки файла {e.Message}");
+        }
+    }
+
+
+    // Метод для записи чисел в бинарный файл
+    static void WriteBinaryFile(string fileName, int[] numbers)
+    {
+        using (BinaryWriter writer = new BinaryWriter(File.Open(fileName, FileMode.Create)))
+        {
+            writer.Write(numbers.Select(n => (byte)n).ToArray());
+        }
+    }
+
+ 
+}
