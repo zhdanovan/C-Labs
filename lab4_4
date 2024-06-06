@@ -80,7 +80,7 @@ class Program
     // Задача 4
     static void Task4()
     {
-        string filePath = "yourFilePath.txt"; // Замените на путь к вашему файлу
+        string filePath = "yourFilePath.txt"; 
         string tempFilePath = Path.GetTempFileName();
         using (StreamReader reader = new StreamReader(filePath))
         using (StreamWriter writer = new StreamWriter(tempFilePath))
